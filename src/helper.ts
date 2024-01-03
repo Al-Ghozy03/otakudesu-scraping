@@ -21,7 +21,7 @@ export const AxiosService = async (
       }
       return reject(response);
     } catch (error) {
-      return reject(error.message);
+      return reject(error);
     }
   });
 };
