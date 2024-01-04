@@ -1,9 +1,12 @@
 export interface Anime {
   title: string | undefined;
   href: string | undefined;
-  episode: string | undefined;
+  episode?: string | undefined;
   thumbnail: string | undefined;
-  date: string | undefined;
+  date?: string | undefined;
+  genre?: string;
+  status?: string;
+  rating?: string;
 }
 
 export interface Episode {

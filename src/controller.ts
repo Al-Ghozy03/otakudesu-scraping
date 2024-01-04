@@ -343,6 +343,56 @@ class Controller extends BaseController {
       return super.error(res, 500, er);
     }
   }
+  async search(req: Request, res: Response) {
+    try {
+      const { q } = req.query;
+      if (!q) return super.error(res, 500, "q is required");
+      const response = await AxiosService(`${baseUrl}?s=${q}&post_type=anime`);
+      const $ = cheerio.load(response.data);
+      const element = $(
+        "body > .wowmaskot > #venkonten > .vezone > .venser > .venutama > .page > ul > li"
+      );
+      const animeList: Anime[] = [];
+      const genreList: Genre[] = [];
+      element.each((i, v) => {
+        const data = $(v);
+        const thumbnail = data.find("img").attr("src");
+        const href = data
+          .find("h2 > a")
+          .attr("href")
+          ?.replace(`${baseUrl}/anime`, "");
+        const title = data.find("h2 > a").text().trim();
+        const status = data
+          .find(".set:nth-child(4)")
+          .text()
+          .replace("Status :", "")
+          .trim();
+        const rating = data
+          .find(".set:nth-child(5)")
+          .text()
+          .replace("Rating :", "")
+          .trim();
+
+        animeList.push({
+          title,
+          href,
+          thumbnail,
+          genre: data
+            .find(".set:nth-child(3)")
+            .text()
+            .replace("Genres : ", "")
+            .trim(),
+          status,
+          rating,
+        });
+      });
+
+      return super.success(res, animeList);
+    } catch (er) {
+      console.log(er);
+      return super.error(res, 500, er);
+    }
+  }
 }
 
 export default new Controller();
