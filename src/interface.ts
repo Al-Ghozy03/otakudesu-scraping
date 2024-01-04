@@ -12,7 +12,8 @@ export interface EpisodeInterface {
   date: string | undefined;
 }
 
-export interface MirrorLinkQuality {
-  quality: "360p" | "480p" | "720p";
+export interface LinkQuality {
+  quality: string;
   mirror: string;
+  link: string | undefined;
 }

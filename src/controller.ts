@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
 import { AxiosService } from "./helper";
 import cheerio from "cheerio";
-import {
-  AnimeInterface,
-  EpisodeInterface,
-  MirrorLinkQuality,
-} from "./interface";
+import { AnimeInterface, EpisodeInterface, LinkQuality } from "./interface";
 
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
@@ -144,43 +140,26 @@ class Controller extends BaseController {
       const response = await AxiosService(`${baseUrl}/episode/${href}`);
       const $ = cheerio.load(response.data);
       const element = $("body > .wowmaskot > #venkonten > .venser");
-      const mirrorLinkQuality: MirrorLinkQuality[] = [];
+      const downloadLinkQuality: LinkQuality[] = [];
 
       // TODO: get mirror quality
-      element.find(".mirrorstream > ul.m360p > li").each((i, v) => {
-        mirrorLinkQuality.push({
-          mirror: $(v).find("a").text().trim(),
-          quality: "360p",
+      element.find(".download > ul > li").each((i, v) => {
+        const data = $(v);
+        downloadLinkQuality.push({
+          mirror: data.find("a").text().trim(),
+          quality: data.find("strong").text().trim(),
+          link: data.find("a").attr("href"),
         });
       });
-      element.find(".mirrorstream > ul.m480p > li").each((i, v) => {
-        mirrorLinkQuality.push({
-          mirror: $(v).find("a").text().trim(),
-          quality: "480p",
-        });
-      });
-
-      element.find(".mirrorstream > ul.m720p > li").each((i, v) => {
-        mirrorLinkQuality.push({
-          mirror: $(v).find("a").text().trim(),
-          quality: "720p",
-        });
-      });
-
       return super.success(res, {
         title: element.find(".venutama > h1").text().trim(),
         default_embeded_player: element
           .find(".responsive-embed-stream > iframe")
           .attr("src"),
-        mirror: {
-          m360p: mirrorLinkQuality.filter((v) => v.quality === "360p"),
-          m480p: mirrorLinkQuality.filter((v) => v.quality === "480p"),
-          m720p: mirrorLinkQuality.filter((v) => v.quality === "720p"),
-        },
+        download_link: downloadLinkQuality,
       });
     } catch (er) {
       console.log(er);
-
       return super.error(res, 500, er);
     }
   }
