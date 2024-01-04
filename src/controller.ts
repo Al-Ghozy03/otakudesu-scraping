@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
 import { AxiosService } from "./helper";
 import cheerio from "cheerio";
-import { AnimeInterface, EpisodeInterface } from "./interface";
-
+import {
+  AnimeInterface,
+  EpisodeInterface,
+  MirrorLinkQuality,
+} from "./interface";
+import puppeteer, { Page, PuppeteerNode } from "puppeteer";
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
   success(res: Response, data: any) {
@@ -127,6 +131,63 @@ class Controller extends BaseController {
           .trim(),
         thumbnail: element.find(".fotoanime > img").attr("src"),
         episode: episodeList,
+      });
+    } catch (er) {
+      console.log(er);
+
+      return super.error(res, 500, er);
+    }
+  }
+  async watch(req: Request, res: Response) {
+    try {
+      const { href } = req.params;
+      const response = await AxiosService(`${baseUrl}/episode/${href}`);
+      const $ = cheerio.load(response.data);
+      const element = $("body > .wowmaskot > #venkonten > .venser");
+      const mirrorLinkQuality: MirrorLinkQuality[] = [];
+
+      element.find(".mirrorstream > ul.m360p").each((i, v) => {
+        $(v)
+          .find("li")
+          .each((j, val) => {
+            mirrorLinkQuality.push({
+              mirror: $(val).find("a").text().trim(),
+              quality: "360p",
+            });
+          });
+      });
+      element.find(".mirrorstream > ul.m480p").each((i, v) => {
+        $(v)
+          .find("li")
+          .each((j, val) => {
+            mirrorLinkQuality.push({
+              mirror: $(val).find("a").text().trim(),
+              quality: "480p",
+            });
+          });
+      });
+
+      element.find(".mirrorstream > ul.m720p").each((i, v) => {
+        $(v)
+          .find("li")
+          .each((j, val) => {
+            mirrorLinkQuality.push({
+              mirror: $(val).find("a").text().trim(),
+              quality: "720p",
+            });
+          });
+      });
+
+      return super.success(res, {
+        title: element.find(".venutama > h1").text().trim(),
+        default_embeded_player: element
+          .find(".responsive-embed-stream > iframe")
+          .attr("src"),
+        mirror: {
+          m360p: mirrorLinkQuality.filter((v) => v.quality === "360p"),
+          m480p: mirrorLinkQuality.filter((v) => v.quality === "480p"),
+          m720p: mirrorLinkQuality.filter((v) => v.quality === "720p"),
+        },
       });
     } catch (er) {
       console.log(er);
