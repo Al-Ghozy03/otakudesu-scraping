@@ -71,3 +71,11 @@ http://localhost:3000/genre/action?page=10
 ```
 
 Example : http://localhost:3000/release-schedule/
+
+#### Search anime by keyword
+
+```
+/search?q=[keyword]
+```
+
+Example : http://localhost:3000/search?q=jujutsu kaisen
