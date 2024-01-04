@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AxiosService } from "./helper";
 import cheerio from "cheerio";
-import { Anime, Episode, Genre, LinkQuality } from "./interface";
+import { Anime, Episode, Genre, GenreAnime, LinkQuality } from "./interface";
 
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
@@ -244,9 +244,58 @@ class Controller extends BaseController {
       const genre: Genre[] = [];
       element.each((i, v) => {
         const data = $(v);
-        genre.push({ title: data.text().trim(), href: data.attr("href") });
+        genre.push({
+          title: data.text().trim(),
+          href: data.attr("href")?.replace("/genres", ""),
+        });
       });
       return super.success(res, genre);
+    } catch (er) {
+      console.log(er);
+      return super.error(res, 500, er);
+    }
+  }
+  async genreDetail(req: Request, res: Response) {
+    try {
+      const { href } = req.params;
+      const { page } = req.query;
+      const animeList: GenreAnime[] = [];
+      const response = await AxiosService(
+        `${baseUrl}/genres/${href}/page/${page ?? 1}`
+      );
+      const $ = cheerio.load(response.data);
+      const element = $(
+        "body > .wowmaskot > #venkonten > .vezone > .venser > .page"
+      );
+
+      element.find(".col-md-4").each((i, v) => {
+        const data = $(v).find(".col-anime");
+        const title = data.find(".col-anime-title > a").text().trim();
+        const studio = data.find(".col-anime-studio").text().trim();
+        const episode = data.find(".col-anime-eps").text().trim();
+        const rating = data.find(".col-anime-rating").text().trim();
+        const href = data
+          .find(".col-anime-title > a")
+          .attr("href")
+          ?.replace(`${baseUrl}/anime`, "");
+
+        const thumbnail = data.find(".col-anime-cover > img").attr("src");
+        animeList.push({ title, studio, episode, rating, href, thumbnail });
+      });
+
+      const totalPages: number[] = [0];
+      const pagination = $(".pagination > .pagipagi > .pagenavix > a");
+      pagination.each((i, v) => {
+        const data = $(v);
+        totalPages.push(Number(data.text().trim()));
+      });
+
+      return super.success(
+        res,
+        animeList,
+        Number(page),
+        totalPages.filter((v) => !Number.isNaN(v)).reverse()[0]
+      );
     } catch (er) {
       console.log(er);
       return super.error(res, 500, er);
