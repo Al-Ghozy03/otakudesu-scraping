@@ -5,8 +5,18 @@ import { AnimeInterface, EpisodeInterface, LinkQuality } from "./interface";
 
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
-  success(res: Response, data: any) {
-    return res.status(200).json({ message: "success", data });
+  success(
+    res: Response,
+    data: any,
+    current_page?: number,
+    total_pages?: number
+  ) {
+    return res.status(200).json({
+      message: "success",
+      ...(current_page && { current_page }),
+      ...(total_pages && { total_pages }),
+      data,
+    });
   }
   error(res: Response, code: number, message: any) {
     return res.status(code).json({ message });
@@ -19,7 +29,6 @@ class Controller extends BaseController {
       message: "welcome",
     });
   }
-
   async onGoing(req: Request, res: Response) {
     try {
       const { page } = req.query;
@@ -51,13 +60,76 @@ class Controller extends BaseController {
           episode,
         });
       });
+      const totalPages: number[] = [0];
+      const pagination = $(
+        "body > .wowmaskot > #venkonten > .vezone > .venser > .venutama > .pagination > .pagenavix > a"
+      );
+      pagination.each((i, v) => {
+        const data = $(v);
+        totalPages.push(Number(data.text().trim()));
+      });
 
-      return super.success(res, animeList);
+      return super.success(
+        res,
+        animeList,
+        Number(page),
+        totalPages.filter((v) => !Number.isNaN(v)).reverse()[0]
+      );
     } catch (er) {
       return super.error(res, 500, er);
     }
   }
+  async complete(req: Request, res: Response) {
+    try {
+      const { page } = req.query;
+      const animeList: AnimeInterface[] = [];
+      const response = await AxiosService(
+        `${baseUrl}/complete-anime/page/${page ?? 1}`
+      );
+      const $ = cheerio.load(response.data);
+      const element = $(
+        "body > .wowmaskot > #venkonten > .vezone > .venser > .venutama > .rseries > .rapi > .venz > ul > li"
+      );
+      element.each((i, v) => {
+        const data = $(v);
+        const href = data.find(".detpost > .thumb > a").attr("href");
+        const date = data.find(".detpost > .newnime").text().trim();
+        const episode = data.find(".detpost > .epz:nth-child(1)").text().trim();
+        const title = data
+          .find(".detpost > .thumb > a > .thumbz > h2")
+          .text()
+          .trim();
+        const thumbnail = data
+          .find(".detpost > .thumb > a > .thumbz > img")
+          .attr("src");
+        animeList.push({
+          href: href?.replace(`${baseUrl}/anime`, ""),
+          title,
+          thumbnail,
+          date,
+          episode,
+        });
+      });
 
+      const totalPages: number[] = [0];
+      const pagination = $(
+        "body > .wowmaskot > #venkonten > .vezone > .venser > .venutama > .pagination > .pagenavix > a"
+      );
+      pagination.each((i, v) => {
+        const data = $(v);
+        totalPages.push(Number(data.text().trim()));
+      });
+
+      return super.success(
+        res,
+        animeList,
+        Number(page),
+        totalPages.filter((v) => !Number.isNaN(v)).reverse()[0]
+      );
+    } catch (er) {
+      return super.error(res, 500, er);
+    }
+  }
   async detail(req: Request, res: Response) {
     try {
       const { href } = req.params;
