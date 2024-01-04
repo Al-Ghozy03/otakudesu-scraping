@@ -6,7 +6,7 @@ import {
   EpisodeInterface,
   MirrorLinkQuality,
 } from "./interface";
-import puppeteer, { Page, PuppeteerNode } from "puppeteer";
+
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
   success(res: Response, data: any) {
@@ -147,36 +147,24 @@ class Controller extends BaseController {
       const mirrorLinkQuality: MirrorLinkQuality[] = [];
 
       // TODO: get mirror quality
-      element.find(".mirrorstream > ul.m360p").each((i, v) => {
-        $(v)
-          .find("li")
-          .each((j, val) => {
-            mirrorLinkQuality.push({
-              mirror: $(val).find("a").text().trim(),
-              quality: "360p",
-            });
-          });
+      element.find(".mirrorstream > ul.m360p > li").each((i, v) => {
+        mirrorLinkQuality.push({
+          mirror: $(v).find("a").text().trim(),
+          quality: "360p",
+        });
       });
-      element.find(".mirrorstream > ul.m480p").each((i, v) => {
-        $(v)
-          .find("li")
-          .each((j, val) => {
-            mirrorLinkQuality.push({
-              mirror: $(val).find("a").text().trim(),
-              quality: "480p",
-            });
-          });
+      element.find(".mirrorstream > ul.m480p > li").each((i, v) => {
+        mirrorLinkQuality.push({
+          mirror: $(v).find("a").text().trim(),
+          quality: "480p",
+        });
       });
 
-      element.find(".mirrorstream > ul.m720p").each((i, v) => {
-        $(v)
-          .find("li")
-          .each((j, val) => {
-            mirrorLinkQuality.push({
-              mirror: $(val).find("a").text().trim(),
-              quality: "720p",
-            });
-          });
+      element.find(".mirrorstream > ul.m720p > li").each((i, v) => {
+        mirrorLinkQuality.push({
+          mirror: $(v).find("a").text().trim(),
+          quality: "720p",
+        });
       });
 
       return super.success(res, {
