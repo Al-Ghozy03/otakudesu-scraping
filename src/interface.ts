@@ -1,4 +1,4 @@
-export interface AnimeInterface {
+export interface Anime {
   title: string | undefined;
   href: string | undefined;
   episode: string | undefined;
@@ -6,7 +6,7 @@ export interface AnimeInterface {
   date: string | undefined;
 }
 
-export interface EpisodeInterface {
+export interface Episode {
   title: string | undefined;
   href: string | undefined;
   date: string | undefined;
@@ -16,4 +16,9 @@ export interface LinkQuality {
   quality: string;
   mirror: string;
   link: string | undefined;
+}
+
+export interface Genre {
+  title: string;
+  href: string | undefined;
 }

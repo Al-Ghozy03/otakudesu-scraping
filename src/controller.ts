@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AxiosService } from "./helper";
 import cheerio from "cheerio";
-import { AnimeInterface, EpisodeInterface, LinkQuality } from "./interface";
+import { Anime, Episode, Genre, LinkQuality } from "./interface";
 
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
@@ -32,7 +32,7 @@ class Controller extends BaseController {
   async onGoing(req: Request, res: Response) {
     try {
       const { page } = req.query;
-      const animeList: AnimeInterface[] = [];
+      const animeList: Anime[] = [];
       const response = await AxiosService(
         `${baseUrl}/ongoing-anime/page/${page ?? 1}`
       );
@@ -82,7 +82,7 @@ class Controller extends BaseController {
   async complete(req: Request, res: Response) {
     try {
       const { page } = req.query;
-      const animeList: AnimeInterface[] = [];
+      const animeList: Anime[] = [];
       const response = await AxiosService(
         `${baseUrl}/complete-anime/page/${page ?? 1}`
       );
@@ -133,7 +133,7 @@ class Controller extends BaseController {
   async detail(req: Request, res: Response) {
     try {
       const { href } = req.params;
-      const episodeList: EpisodeInterface[] = [];
+      const episodeList: Episode[] = [];
       const response = await AxiosService(`${baseUrl}/anime/${href}`);
       const $ = cheerio.load(response.data);
       const element = $("body > .wowmaskot > #venkonten > .venser");
@@ -230,6 +230,23 @@ class Controller extends BaseController {
           .attr("src"),
         download_link: downloadLinkQuality,
       });
+    } catch (er) {
+      console.log(er);
+      return super.error(res, 500, er);
+    }
+  }
+  async genre(req: Request, res: Response) {
+    try {
+      const response = await AxiosService(`${baseUrl}/genre-list`);
+      const $ = cheerio.load(response.data);
+      const element = $("ul.genres > li > a");
+
+      const genre: Genre[] = [];
+      element.each((i, v) => {
+        const data = $(v);
+        genre.push({ title: data.text().trim(), href: data.attr("href") });
+      });
+      return super.success(res, genre);
     } catch (er) {
       console.log(er);
       return super.error(res, 500, er);
