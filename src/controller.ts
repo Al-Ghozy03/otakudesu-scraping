@@ -146,6 +146,7 @@ class Controller extends BaseController {
       const element = $("body > .wowmaskot > #venkonten > .venser");
       const mirrorLinkQuality: MirrorLinkQuality[] = [];
 
+      // TODO: get mirror quality
       element.find(".mirrorstream > ul.m360p").each((i, v) => {
         $(v)
           .find("li")
