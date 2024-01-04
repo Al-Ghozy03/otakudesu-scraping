@@ -9,4 +9,5 @@ router.get("/on-going", controller.onGoing);
 router.get("/watch/:href", controller.watch);
 router.get("/genre", controller.genre);
 router.get("/genre/:href", controller.genreDetail);
+router.get("/release-schedule",controller.releaseSchedule)
 router.get("/:href", controller.detail);

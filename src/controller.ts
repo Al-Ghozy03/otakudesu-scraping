@@ -1,7 +1,15 @@
 import { Request, Response } from "express";
 import { AxiosService } from "./helper";
 import cheerio from "cheerio";
-import { Anime, Episode, Genre, GenreAnime, LinkQuality } from "./interface";
+import {
+  Anime,
+  Episode,
+  Genre,
+  GenreAnime,
+  LinkQuality,
+  ReleaseAnime,
+  ReleaseDay,
+} from "./interface";
 
 const baseUrl: string = "https://otakudesu.cam";
 class BaseController {
@@ -296,6 +304,40 @@ class Controller extends BaseController {
         Number(page),
         totalPages.filter((v) => !Number.isNaN(v)).reverse()[0]
       );
+    } catch (er) {
+      console.log(er);
+      return super.error(res, 500, er);
+    }
+  }
+  async releaseSchedule(req: Request, res: Response) {
+    try {
+      const releaseDay: ReleaseDay[] = [];
+      const anime: ReleaseAnime[] = [];
+      const response = await AxiosService(`${baseUrl}/jadwal-rilis`);
+      const $ = cheerio.load(response.data);
+      const element = $(
+        "body > .wowmaskot > #venkonten > .vezone > .venutama > .page > .kgjdwl321 > .kglist321"
+      );
+
+      element.each((i, v) => {
+        const data = $(v);
+        data.find("ul > li").each((j, val) => {
+          const value = $(val).find("a");
+          anime.push({
+            day: data.find("h2").text().trim(),
+            title: value.text().trim(),
+            href: value.attr("href")?.replace(`${baseUrl}/anime`, ""),
+          });
+        });
+        releaseDay.push({
+          day: data.find("h2").text().trim(),
+          release_anime: anime
+            .filter((v) => v.day === data.find("h2").text().trim())
+            .map(({ title, href }) => ({ title, href })),
+        });
+      });
+
+      return super.success(res, releaseDay);
     } catch (er) {
       console.log(er);
       return super.error(res, 500, er);

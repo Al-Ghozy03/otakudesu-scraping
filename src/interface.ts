@@ -31,3 +31,14 @@ export interface GenreAnime {
   href: string | undefined;
   thumbnail: string | undefined;
 }
+
+export interface ReleaseDay {
+  day: string;
+  release_anime: ReleaseAnime[];
+}
+
+export interface ReleaseAnime {
+  day?: string;
+  title: string;
+  href: string | undefined;
+}
