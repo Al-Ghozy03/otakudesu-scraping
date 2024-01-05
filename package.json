@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec ts-node src/server.ts"
+    "start": "ts-node src/server.ts",
+    "dev": "nodemon --exec ts-node src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/cheerio": "^0.22.35",
+    "@vercel/node": "^3.0.15",
     "axios": "^1.6.3",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
