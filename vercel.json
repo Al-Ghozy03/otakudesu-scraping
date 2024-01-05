@@ -1,3 +1,15 @@
 {
-  "rewrites": [{ "source": "/dist/(.*)", "destination": "/dist" }]
+  "version": 2,
+  "builds": [
+    {
+      "src": "tsconfig.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/$1"
+    }
+  ]
 }
