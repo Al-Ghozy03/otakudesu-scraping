@@ -67,7 +67,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var helper_1 = require("./helper");
 var cheerio_1 = __importDefault(require("cheerio"));
-var baseUrl = "https://otakudesu.cam";
+var baseUrl = "https://otakudesu.media";
 var BaseController = /** @class */ (function () {
     function BaseController() {
     }
