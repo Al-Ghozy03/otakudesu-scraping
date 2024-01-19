@@ -11,7 +11,7 @@ import {
   ReleaseDay,
 } from "./interface";
 
-const baseUrl: string = "https://otakudesu.cam";
+const baseUrl: string = "https://otakudesu.media";
 class BaseController {
   success(
     res: Response,
