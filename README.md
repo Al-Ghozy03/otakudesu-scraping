@@ -14,7 +14,7 @@ https://github.com/Al-Ghozy03/otakudesu-scraping.git
 
 ## Endpoint
 
-**BaseUrl** = http://localhost:3000
+**BaseUrl** = https://otakudesu-scraping.vercel.app
 
 #### On going anime
 
@@ -22,7 +22,7 @@ https://github.com/Al-Ghozy03/otakudesu-scraping.git
 /on-going?page=[number]
 ```
 
-Example: http://localhost:3000/on-going?page=1
+Example: https://otakudesu-scraping.vercel.app/on-going?page=1
 
 #### Complete anime
 
@@ -30,7 +30,7 @@ Example: http://localhost:3000/on-going?page=1
 /complete?page=[number]
 ```
 
-Example: http://localhost:3000/complete?page=53
+Example: https://otakudesu-scraping.vercel.app/complete?page=1
 
 #### Detail anime
 
@@ -38,7 +38,7 @@ Example: http://localhost:3000/complete?page=53
 /[endpoint]
 ```
 
-Example : http://localhost:3000/spy-family-sub-indo/
+Example : https://otakudesu-scraping.vercel.app/spy-family-sub-indo
 
 #### Watch anime by episode
 
@@ -46,7 +46,7 @@ Example : http://localhost:3000/spy-family-sub-indo/
 /watch/[endpoint]
 ```
 
-Example : http://localhost:3000/watch/sxf-s2-episode-1-sub-indo/
+Example : https://otakudesu-scraping.vercel.app/watch/sxf-s2-episode-1-sub-indo
 
 #### Genre
 
@@ -54,7 +54,7 @@ Example : http://localhost:3000/watch/sxf-s2-episode-1-sub-indo/
 /genre/
 ```
 
-Example : http://localhost:3000/genre/
+Example : https://otakudesu-scraping.vercel.app/genre/
 
 #### Genre detail
 
@@ -62,7 +62,7 @@ Example : http://localhost:3000/genre/
 /genre/[endpoint]?page=[number]
 ```
 
-http://localhost:3000/genre/action?page=10
+Example : https://otakudesu-scraping.vercel.app/genre/action?page=10
 
 #### Release Schedule
 
@@ -70,7 +70,7 @@ http://localhost:3000/genre/action?page=10
 /release-schedule/
 ```
 
-Example : http://localhost:3000/release-schedule/
+Example : https://otakudesu-scraping.vercel.app/release-schedule/
 
 #### Search anime by keyword
 
@@ -78,4 +78,4 @@ Example : http://localhost:3000/release-schedule/
 /search?q=[keyword]
 ```
 
-Example : http://localhost:3000/search?q=jujutsu kaisen
+Example : https://otakudesu-scraping.vercel.app/search?q=jujutsu%20kaisen
